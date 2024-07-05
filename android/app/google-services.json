@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "57418835279",
+    "project_id": "databasesapp-896df",
+    "storage_bucket": "databasesapp-896df.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:57418835279:android:be3887ed5356465935113a",
+        "android_client_info": {
+          "package_name": "com.nothing.databasesapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC5d84mPq_3MDipxYaAopDwdFRnGz1sMcU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
