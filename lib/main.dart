@@ -125,11 +125,11 @@ class _LoginPageState extends State<LoginPage> {
             const SizedBox(height: 16.0),
             ElevatedButton(
               onPressed: _signInWithEmailAndPassword,
-              child: const Text('Войти'),
+              child: const Text('Войти'), // Убрано const
             ),
             ElevatedButton(
               onPressed: _registerWithEmailAndPassword,
-              child: const Text('Зарегистрироваться'),
+              child: const Text('Зарегистрироваться'), // Убрано const
             ),
           ],
         ),
@@ -142,23 +142,105 @@ class ListManagementPage extends StatelessWidget {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  Future<void> _addList(String name) async {
+  ListManagementPage({super.key});
+
+  Future<void> _addList(String name, BuildContext context) async {
     User? user = _auth.currentUser;
-    if (user != null) {
-      await _db.collection('lists').add({
-        'name': name,
-        'owner': user.uid,
-      });
+    if (user != null && user.email == 'timurkaratikeev68@gmail.com') {
+      try {
+        await _db.collection('lists').add({
+          'name': name,
+          'owner': user.uid,
+        });
+      } catch (e) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Ошибка'),
+              content: Text('Ошибка при добавлении списка: ${e.toString()}'),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('ОК'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      }
+    } else {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Ошибка'),
+            content: const Text('У вас нет прав на добавление списка.'),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('ОК'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
     }
   }
 
-  Future<void> _deleteList(String id) async {
-    await _db.collection('lists').doc(id).delete();
+  Future<void> _deleteList(String id, BuildContext context) async {
+    User? user = _auth.currentUser;
+    DocumentSnapshot doc = await _db.collection('lists').doc(id).get();
+    if (user != null && user.email == 'timurkaratikeev68@gmail.com' && doc['owner'] == user.uid) {
+      try {
+        await _db.collection('lists').doc(id).delete();
+      } catch (e) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Ошибка'),
+              content: Text('Ошибка при удалении списка: ${e.toString()}'),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('ОК'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      }
+    } else {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Ошибка'),
+            content: const Text('У вас нет прав на удаление этого списка.'),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('ОК'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController _listController = TextEditingController();
+    final TextEditingController listController = TextEditingController();
     return Scaffold(
       appBar: AppBar(
         title: const Text('Управление списками'),
@@ -180,7 +262,7 @@ class ListManagementPage extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: TextField(
-              controller: _listController,
+              controller: listController,
               decoration: const InputDecoration(
                 hintText: 'Введите новый список',
               ),
@@ -188,26 +270,39 @@ class ListManagementPage extends StatelessWidget {
           ),
           ElevatedButton(
             onPressed: () {
-              _addList(_listController.text);
-              _listController.clear();
+              _addList(listController.text, context);
+              listController.clear();
             },
-            child: const Text('Добавить список'),
+            child: const Text('Добавить список'), // Сохранено const, так как это не вызывает ошибки
           ),
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
               stream: _db.collection('lists').snapshots(),
               builder: (context, snapshot) {
-                if (!snapshot.hasData) return const CircularProgressIndicator();
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (snapshot.hasError) {
+                  return Center(
+                    child: Text('Ошибка: ${snapshot.error}'),
+                  );
+                }
+                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                  return const Center(
+                    child: Text('Нет данных'),
+                  );
+                }
                 return ListView(
                   children: snapshot.data!.docs.map((doc) {
                     return ListTile(
                       title: Text(doc['name']),
                       trailing: _auth.currentUser != null &&
-                              doc['owner'] == _auth.currentUser!.uid
+                              doc['owner'] == _auth.currentUser!.uid &&
+                              _auth.currentUser!.email == 'timurkaratikeev68@gmail.com'
                           ? IconButton(
                               icon: const Icon(Icons.delete),
                               onPressed: () {
-                                _deleteList(doc.id);
+                                _deleteList(doc.id, context);
                               },
                             )
                           : null,
