@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -40,10 +41,9 @@ class _LoginPageState extends State<LoginPage> {
         email: _emailController.text.trim(),
         password: _passwordController.text,
       );
-      // Navigate to the next page (e.g., list management page)
-      Navigator.push(
+      Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const ListManagementPage()),
+        MaterialPageRoute(builder: (context) => ListManagementPage()),
       );
     } catch (e) {
       showDialog(
@@ -51,6 +51,37 @@ class _LoginPageState extends State<LoginPage> {
         builder: (BuildContext context) {
           return AlertDialog(
             title: const Text('Ошибка входа'),
+            content: Text('Ошибка: ${e.toString()}'),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('ОК'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
+  }
+
+  Future<void> _registerWithEmailAndPassword() async {
+    try {
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
+      );
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => ListManagementPage()),
+      );
+    } catch (e) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Ошибка регистрации'),
             content: Text('Ошибка: ${e.toString()}'),
             actions: <Widget>[
               TextButton(
@@ -96,6 +127,10 @@ class _LoginPageState extends State<LoginPage> {
               onPressed: _signInWithEmailAndPassword,
               child: const Text('Войти'),
             ),
+            ElevatedButton(
+              onPressed: _registerWithEmailAndPassword,
+              child: const Text('Зарегистрироваться'),
+            ),
           ],
         ),
       ),
@@ -104,10 +139,26 @@ class _LoginPageState extends State<LoginPage> {
 }
 
 class ListManagementPage extends StatelessWidget {
-  const ListManagementPage({super.key});
+  final FirebaseFirestore _db = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  Future<void> _addList(String name) async {
+    User? user = _auth.currentUser;
+    if (user != null) {
+      await _db.collection('lists').add({
+        'name': name,
+        'owner': user.uid,
+      });
+    }
+  }
+
+  Future<void> _deleteList(String id) async {
+    await _db.collection('lists').doc(id).delete();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final TextEditingController _listController = TextEditingController();
     return Scaffold(
       appBar: AppBar(
         title: const Text('Управление списками'),
@@ -116,13 +167,57 @@ class ListManagementPage extends StatelessWidget {
             icon: const Icon(Icons.logout),
             onPressed: () {
               FirebaseAuth.instance.signOut();
-              Navigator.pop(context); // Navigate back to login page
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const LoginPage()),
+              );
             },
           ),
         ],
       ),
-      body: const Center(
-        child: Text('Эта страница для управления списками.'),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: TextField(
+              controller: _listController,
+              decoration: const InputDecoration(
+                hintText: 'Введите новый список',
+              ),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              _addList(_listController.text);
+              _listController.clear();
+            },
+            child: const Text('Добавить список'),
+          ),
+          Expanded(
+            child: StreamBuilder<QuerySnapshot>(
+              stream: _db.collection('lists').snapshots(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) return const CircularProgressIndicator();
+                return ListView(
+                  children: snapshot.data!.docs.map((doc) {
+                    return ListTile(
+                      title: Text(doc['name']),
+                      trailing: _auth.currentUser != null &&
+                              doc['owner'] == _auth.currentUser!.uid
+                          ? IconButton(
+                              icon: const Icon(Icons.delete),
+                              onPressed: () {
+                                _deleteList(doc.id);
+                              },
+                            )
+                          : null,
+                    );
+                  }).toList(),
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
