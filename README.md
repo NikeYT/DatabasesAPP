@@ -1,5 +1,5 @@
 # DatabasesAPP
-[![Support me on Patreon](https://img.shields.io/badge/Support%20me%20on-Patreon-orange.svg?style=for-the-badge&logo=patreon)](https://www.patreon.com/Timur854)
+[![Поддержи меня на](https://img.shields.io/badge/Support%20me%20on-Patreon-orange.svg?style=for-the-badge&logo=patreon)](https://www.patreon.com/Timur854)
 ## О приложении
 **DatabasesAPP** - это мобильное приложение (apk), предназначенное для объединения всего сообщества с целью удобного общения, проверки баз данных (списки по категориям), а также получения дополнительной информации о базах данных с помощью комментариев прямо в списке баз данных. При нажатии на базу данных открываются комментарии.
 
