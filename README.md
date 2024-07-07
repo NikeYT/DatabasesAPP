@@ -11,7 +11,7 @@
 ## Установка и запуск
 Чтобы установить и запустить приложение, следуйте этим шагам:
 
-1. Скачайте [DatabasesAPP.apk]([(https://github.com/NikeYT/DatabasesAPP/releases/tag/main_release)).
+1. Скачайте [DatabasesAPP.apk](https://github.com/NikeYT/DatabasesAPP/releases/tag/main_release).
 2. Установите apk-файл на ваше устройство.
 3. Откройте приложение и следуйте инструкциям для регистрации и начала использования.
 
