@@ -16,7 +16,7 @@
 
 1. Скачайте [DatabasesAPP.apk](https://github.com/NikeYT/DatabasesAPP/releases/tag/main_release).
 2. Установите apk-файл на ваше устройство.
-3. Откройте приложение и следуйте инструкциям для регистрации и начала использования.
+3. Откройте приложение и зарегистрируйтесь.
 
 ## TO-DO
 Все задачи, которые нужно выполнить, находятся в разделе обсуждений на GitHub: [DatabasesAPP TO-DO](https://github.com/NikeYT/DatabasesAPP/discussions)
