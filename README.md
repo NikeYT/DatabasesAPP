@@ -1,10 +1,11 @@
 # DatabasesAPP
-![GitHub stars](https://img.shields.io/github/stars/NikeYT/DatabasesAPP?style=social)
-![GitHub forks](https://img.shields.io/github/forks/NikeYT/DatabasesAPP?style=social)
-![GitHub issues](https://img.shields.io/github/issues/NikeYT/DatabasesAPP)
-![GitHub license](https://img.shields.io/github/license/NikeYT/DatabasesAPP)
+[![GitHub stars](https://img.shields.io/github/stars/NikeYT/DatabasesAPP?style=social)](https://github.com/NikeYT/DatabasesAPP/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/NikeYT/DatabasesAPP?style=social)](https://github.com/NikeYT/DatabasesAPP/network/members)
 
-[![Support me on Patreon](https://img.shields.io/badge/Support%20me%20on-Patreon-orange.svg?style=flat-square&logo=patreon)](https://www.patreon.com/Timur854)
+[![GitHub issues](https://img.shields.io/github/issues/NikeYT/DatabasesAPP)](https://github.com/NikeYT/DatabasesAPP/issues)
+[![GitHub license](https://img.shields.io/github/license/NikeYT/DatabasesAPP)](LICENSE)
+
+[![Support me on Patreon](https://img.shields.io/badge/Support%20me%20on-Patreon-orange.svg?style=for-the-badge&logo=patreon)](https://www.patreon.com/Timur854)
 ## О приложении
 **DatabasesAPP** - это мобильное приложение (apk), предназначенное для объединения всего сообщества с целью удобного общения, проверки баз данных (списки по категориям), а также получения дополнительной информации о базах данных с помощью комментариев прямо в списке баз данных. При нажатии на базу данных открываются комментарии.
 
